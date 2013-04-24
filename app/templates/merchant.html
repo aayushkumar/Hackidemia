@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+  index = 1;
+  swap_with_collapse = function(info) {
+  index +=1;
+  if (!info.photo) {
+    info.photo = "[None]";
+  }
+  if (!info.upc) {
+    info.upc = "[None]";
+  }
+      new_el = $("#accordion2").append("<div class='accordion-group'>    <div class='accordion-heading'>      <a class='accordion-toggle' data-toggle='collapse' data-parent='#accordion2' href='#collapse" + index.toString() + "'>" + info.name + "</a>    </div>    <div id='collapse" + index.toString() + "' class='accordion-body collapse'>      <div class='accordion-inner'>Name: " + info.name + "<br>Photo: " + info.photo + "<br>UPC: " + info.upc + "</div>    </div>");
+
+      $("#get_mat_in").before(new_el);
+      $("#get_mat_in").val("");
+  }
+  
+  get_material = function() {
+    name = $("#get_mat_in").val();
+    $.ajax({
+      url: "/ajax",
+      type: "POST",
+      contentType: "application/json",
+      data: {type: "get_material",
+             name: name}
+    }).done(function( msg) {
+      if (msg === "") {
+        $("#myModal").modal({});
+        $("#name").val(name);
+      }
+      else {
+	  var info = {name: name};
+	  swap_with_collapse(info);
+	  }
+    });
+  }
+
+  new_material = function() {
+    name = $("#name").val();
+    photo = $("#photo").val();
+    upc = $("#upc").val();
+    $.ajax({
+      url: "/ajax",
+      type: "POST",
+      contentType: "application/json",
+      data: {type: "new_material",
+             name: name,
+             url: "", 
+             photo_url: photo, 
+             upc: upc
+             }
+    }).done(function( msg ) {
+	  var info = {
+      name: name,
+      photo: photo,
+      upc: upc
+      };
+	  swap_with_collapse(info);
+    });
+  }
+</script>
+  <h1> Sell Materials </h1>
+<!-- This should have lookahead autocomplete -->
+<div class='accordion' id='accordion2'></div>
+<input type="text" style="margin-bottom:0px; margin-right:4px" id="get_mat_in"/><button id="get_mat_btn" class="btn" onclick="get_material()">Add Material</button>
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Add a Material</h3>
+    Your material does not exist in the database. Please add any information you have about it here to add a new entry to the database.
+  </div>
+  <div class="modal-body">
+    Material Name: <input id="name" type="text" value=""><br>
+    Photos: <input id="photo" type="url" value=""><br>
+    UPC (Universal Product Code): <input id="upc" type="text" value="">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" data-dismiss="modal" onclick="new_material()">Save changes</button>
+  </div>
+ </div>
+<div>
+    <button class="btn" style="margin-top:20px">Submit</button>
+    </div>
+      
+     
+{% endblock %}
+

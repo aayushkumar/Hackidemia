@@ -1,0 +1,15 @@
+
+{% for row_result in results %}
+<div class="row-fluid workshop-result-row">
+  {% for result in row_result %}
+  <div class="span4 workshop-result">
+    <a href={{ result.url }}>
+      <!--<img class="workshop-result-img" src={{ result.img }}></img>-->
+      <div class="workshop-result-img" style="background:url({{ result.img }}) center center no-repeat; background-size:cover; height: 200px;">
+        <p class="text-center">{{ result.title }}</p>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}

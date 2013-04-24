@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="well span3">
+      <ul class="nav nav-list">
+        <!--<button id="testButton" class="btn btn-large btn-primary" type="button">Large button</button>-->
+        <li class="nav-header">Refine your search</li>
+        <li><input type="text" class="span12" placeholder="Materials?"></li>
+        <li><input type="text" class="span12" placeholder="Minimum budget?"></li>
+        <li><input type="text" class="span12" placeholder="Maximum budget?"></li>
+        <li><input type="text" class="span12" placeholder="City?"></li>
+      </ul>
+    </div>
+    <div id="workshop-results" class="well span9">
+      {{ results|safe }}
+    </div>
+  </div>
+</div>
+{% endblock %}
