@@ -4,3 +4,92 @@ Collaborators:
 Aayush Kumar
 Nathan Klug
 William Chau
+
+
+***Setup and Getting Started***
+We decided to use flask and PostgresSQL instead.
+
+We were basically following this: http://blog.y3xz.com/blog/2012/08/16/flask-and-postgresql-on-heroku/
+
+With the following Python libraries, you can just clone the repo or download the source and then use 'sudo python setup.py install'
+
+1) Install Flask 0.9 http://flask.pocoo.org/
+2) Install SQLAlchemy 0.8 http://www.sqlalchemy.org/
+3) Install PostgresSQL 9.2.4 http://www.postgresql.org/
+   You can use whatever password you want.
+   You can use the paAdmin3 GUI in Applications/ to check out your SQL server.
+4) Install flask-sqlalchemy http://pythonhosted.org/Flask-SQLAlchemy/
+5) Set DATABASE_URL environment variable to your PostgresSQL URI (eg 'postgresql://localhost:5432'). You can put this in your .bashrc so you don't have to set up the variable every time.
+
+Clone the repo and you should be able to run 'python app.py' right away. Check out your app through http://localhost:5000
+
+With SQLAlchemy, you actually do not really need to know much SQL :) It's quite magical... you can take a look at the blog post to take a look at how it works.
+
+And everyone, check out http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+
+Apparently, the tutorial is lauded as one of the best flask tutorials out there, so take a look! (I will be soon).
+
+For instructions on getting things to work with Heroku: https://devcenter.heroku.com/articles/quickstart
+To make git work well, https://devcenter.heroku.com/articles/keys
+
+
+***Backend***
+The backend is pure python using the flask framework (http://flask.pocoo.org/).
+
+We used PostgreSQL as the database (http://www.postgresql.org/).
+
+Our design patterns of the backend and directory hierarchy are heavily inspired by this flask tutorial, which should have everything you ever need: http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+
+Deploying PostgreSQL + Flask on Heroku is described here: http://blog.y3xz.com/blog/2012/08/16/flask-and-postgresql-on-heroku/
+
+
+There are two main files that we care about on the backend:
+ - app/models.py
+This consists the definitions of all our tables on the backend.  This is the Model (in MVC architecture) and also identifies the relationships between different tables.
+
+
+ - app/views.py
+This consists of all the routes (or pages).  When the user first hits a webpage, say, /search.html, we enter the associated function defined by the route here.  This is the controller (in MVC architecture) and contains the logic of what to do with the request (eg. query database and display the template appropriately).
+
+ A quick primer for defining a new route:
+(i) @app.route('/search', methods=['GET'])
+This defines a new route “/search” only for a HTTP GET request.
+If we want to receive other types of requests we can modify methods as: methods=["GET", "PUT", "POST"]
+
+(ii) What follows next is the function definition for handling the request.  This is like a  typical python function.  The following line:
+return render_template('index.html', lessons=lessons)
+  requests to render the html file “index.html” and passed in the variable “lessons” to be used in the frontend template.
+
+***Frontend***
+The frontend design is mostly a mix of traditional HTML/CSS/Javascript, except not really :)
+
+In place of vanilla HTML, we use the templating language Jinja (http://jinja.pocoo.org/docs/). The main functions you need to know about our usage so far are the following:
+
+1. "include": used in base.html to pull in the navbar
+2. "extends": used in merchant.html and search.html. These extend from base.html, which means they include all of the html in that file
+3. "block": used in conjunction with extends to allow child templates to override the content of the page.
+4. {{ data }}: used to reference objects passed into the template. These are passed in when render_template is called in the server.
+
+The templating system gets called by the server (views.py), which serves pages at the paths designated. There is tight integration between the framework used in the server (flask) and Jinja, so the framework provides a method called "render_template", which renders the template desired, passing to it any data you need.
+
+We use bootstrap.css, which is part of the bootstrap framework (http://twitter.github.io/bootstrap/index.html)
+
+For Javascript, we use a couple different libraries; in particular:
+
+1. jQuery (http://api.jquery.com/)
+2. bootstrap.js (http://twitter.github.io/bootstrap/index.html), which depends on jQuery
+
+Using bootstrap is almost universally preferred to raw jQuery, and their documentation is quite good, so I shouldn't need to explain much here.
+
+
+Most of the frontend code is quite messy, due to the time constraints we were under. Because of this, we do various bad things, like inlining CSS styles and including large script tags in our HTML. Hopefully everything is at least comprehendable :)
+
+
+
+***Other useful links***
+JSON with flask: http://flask.pocoo.org/snippets/83/
+To debug: http://flask.pocoo.org/docs/quickstart/#debug-mode
+Databases:
+  http://docs.sqlalchemy.org/en/latest/core/schema.html#creating-and-dropping-database-tables
+  http://stackoverflow.com/questions/10851141/sqlalchemy-login-with-sql-server-authentication
+Jinja templates: http://jinja.pocoo.org/docs/templates/
