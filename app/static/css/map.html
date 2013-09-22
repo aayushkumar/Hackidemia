@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+     <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry"></script>
+     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script>
+ 
+    $(document).ready(function () {
+ 		initialize();
+ });
+var map;
+var app_key = 'YmU2NmY0ZmMtMDBkMy00ZTkzLWJiMWQtYTkzOWJkZGRjNWM4';
+function initialize() {
+ 
+  var mapOptions = {
+    zoom: 8,
+    center: new google.maps.LatLng(51.043795,-114.080788 ),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+ 
+	showPlaces();
+	showRoute();
+ 
+}
+ 
+function showPlaces(){
+		$.ajax({
+				dataType : "jsonp",
+				url : 'http://api.opencanvas.co/v1.0/routes/538/places?app_key=' + app_key,
+				success: function(data) {
+					$(data.places).each(function(index, place){
+						var options = {map: map,position: new google.maps.LatLng(place.lat,place.lon)};
+        				var marker = new google.maps.Marker(options);
+					});
+ 
+				},
+				error : function() {
+					alert("Sorry, The requested property could not be found.");
+				}
+			});
+}
+function showRoute(){
+		$.ajax({
+				dataType : "jsonp",
+				url : 'http://api.opencanvas.co/v1.0/routes/538?app_key=' + app_key,
+				success: function(data) {
+					console.log(data.lat,data.lon);
+        		 map.setCenter(new google.maps.LatLng(data.lat,data.lon));
+        		 map.setZoom(15);
+        		 var paths = google.maps.geometry.encoding.decodePath(data.polyline);
+				 var poly = new google.maps.Polyline({
+            			path: paths,
+            			strokeColor: '#7fb82c',
+            			strokeOpacity: 0.7,
+            			strokeWeight: 10
+        		});
+        		poly.setMap(map);
+ 
+				},
+				error : function() {
+					alert("Sorry, The requested property could not be found.");
+				}
+		});
+}
+ 
+	</script>
+  </head>
+ 
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
